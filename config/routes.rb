@@ -8,5 +8,7 @@ Rails.application.routes.draw do
   get 'users/', to: 'users#index'
   post 'users/', to: 'users#create'
 
+  get 'user_games/:id', to: 'user_games#get_user_games'
+
   mount ActionCable.server => '/cable'
 end
