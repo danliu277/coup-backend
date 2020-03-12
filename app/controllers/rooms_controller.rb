@@ -23,6 +23,7 @@ class RoomsController < ApplicationController
     def join
         room = Room.find(params[:id])
         if room && room.authenticate(params[:password])
+            UserGame.create(user_id: params[:user_id], room: room)
             render json: room
         else
             render json: {errors: "You dun goofed!"}
