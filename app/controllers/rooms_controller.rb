@@ -12,7 +12,6 @@ class RoomsController < ApplicationController
     def create
         room = Room.new(room_params)
         if room.save
-            # game = Game.create(room: room)
             usergame = UserGame.create(room: room, user_id: room_params[:user_id])
             
             render json:room
