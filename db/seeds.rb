@@ -7,7 +7,6 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 GameMove.destroy_all
-Game.destroy_all
 UserGame.destroy_all
 Card.destroy_all
 Room.destroy_all

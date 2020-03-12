@@ -22,7 +22,11 @@ class RoomsController < ApplicationController
     def join
         room = Room.find(params[:id])
         if room && room.authenticate(params[:password])
-            UserGame.create(user_id: params[:user_id], room: room)
+            user_game = UserGame.create(user_id: params[:user_id], room: room)
+            serialized_data = ActiveModelSerializers::Adapter::Json.new(
+                UserGameSerializer.new(user_game)
+            ).serializable_hash
+            RoomsChannel.broadcast_to room, serialized_data
             render json: room
         else
             render json: {errors: "You dun goofed!"}
