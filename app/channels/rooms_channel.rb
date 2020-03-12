@@ -8,5 +8,6 @@ class RoomsChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
     # user = User.find(params[:user])
     # user.destroy
+    raise 'TRYING TO UNSUBSCRIBE'
   end
 end

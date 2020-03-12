@@ -12,11 +12,20 @@ class RoomsController < ApplicationController
     def create
         room = Room.new(room_params)
         if room.save
-            serialized_data = ActiveModelSerializers::Adapter::Json.new(
-                RoomSerializer.new(room)
-            ).serializable_hash
-            ActionCable.server.broadcast 'rooms_channel', serialized_data
-            head :ok
+            # game = Game.create(room: room)
+            usergame = UserGame.create(room: room, user_id: room_params[:user_id])
+            
+            render json:room
+        end
+        
+    end
+
+    def join
+        room = Room.find(params[:id])
+        if room && room.authenticate(params[:password])
+            render json: room
+        else
+            render json: {errors: "You dun goofed!"}
         end
     end
 

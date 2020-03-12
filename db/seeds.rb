@@ -21,6 +21,7 @@ User.destroy_all
     Card.create(name: 'Captain', image: 'Captain.png')
 }
 
-user1 = User.create(nickname: 'user1')
+# user1 = User.create(nickname: 'user1')
 
-Room.create(name: 'room1', password: '123', user: user1)
+# room1 = Room.create(name: 'room1', password: '123', user: user1)
+# game1 = Game.create(room: room1)
