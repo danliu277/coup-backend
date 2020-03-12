@@ -8,7 +8,7 @@ class RoomSerializer < ActiveModel::Serializer
   end
 
   def user
-    self.object.user.nickname
+    self.object.user
   end
 
   def user_games
