@@ -6,6 +6,7 @@ class GamesController < ApplicationController
 
     def start_game
         game = Game.find_by(room_id: params[:id])
+        game.start_game
         render json: game
     end
 end
