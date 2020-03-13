@@ -4,7 +4,7 @@ class CreateUserGames < ActiveRecord::Migration[6.0]
       t.integer :money
       t.string :cards, array: true
       t.integer :user_id
-      t.integer :room_id
+      t.integer :game_id
 
       t.timestamps
     end
