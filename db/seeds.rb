@@ -6,13 +6,16 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+UserCard.destroy_all
+GameCard.destroy_all
 GameMove.destroy_all
 UserGame.destroy_all
 Card.destroy_all
+Game.destroy_all
 Room.destroy_all
 User.destroy_all
 
-4.times {
+3.times {
     Card.create(name: 'Ambassador', image: 'Ambassador.png')
     Card.create(name: 'Contessa', image: 'Contessa.png')
     Card.create(name: 'Assassin', image: 'Assassin.png')

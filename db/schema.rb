@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 6) do
+ActiveRecord::Schema.define(version: 8) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,12 @@ ActiveRecord::Schema.define(version: 6) do
     t.string "image"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "game_cards", force: :cascade do |t|
+    t.boolean "deck"
+    t.integer "game_id"
+    t.integer "card_id"
   end
 
   create_table "game_moves", force: :cascade do |t|
@@ -32,8 +38,6 @@ ActiveRecord::Schema.define(version: 6) do
   create_table "games", force: :cascade do |t|
     t.integer "room_id"
     t.boolean "started", default: false
-    t.string "deck", default: [], array: true
-    t.string "discard", default: [], array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -46,9 +50,13 @@ ActiveRecord::Schema.define(version: 6) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "user_cards", force: :cascade do |t|
+    t.integer "user_game_id"
+    t.integer "card_id"
+  end
+
   create_table "user_games", force: :cascade do |t|
     t.integer "money", default: 2
-    t.string "cards", default: [], array: true
     t.integer "user_id"
     t.integer "game_id"
     t.datetime "created_at", precision: 6, null: false

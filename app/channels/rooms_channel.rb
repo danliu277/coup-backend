@@ -8,6 +8,7 @@ class RoomsChannel < ApplicationCable::Channel
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
     # Remove if user leaves room
+    # debugger
     room = Room.find(params[:room][:id])
     user_game = room.user_games.find_by(user_id: params[:room][:user])
     user_game.destroy
