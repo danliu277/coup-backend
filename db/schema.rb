@@ -32,6 +32,8 @@ ActiveRecord::Schema.define(version: 6) do
   create_table "games", force: :cascade do |t|
     t.integer "room_id"
     t.boolean "started", default: false
+    t.string "deck", default: [], array: true
+    t.string "discard", default: [], array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -46,7 +48,7 @@ ActiveRecord::Schema.define(version: 6) do
 
   create_table "user_games", force: :cascade do |t|
     t.integer "money"
-    t.string "cards", array: true
+    t.string "cards", default: [], array: true
     t.integer "user_id"
     t.integer "game_id"
     t.datetime "created_at", precision: 6, null: false
