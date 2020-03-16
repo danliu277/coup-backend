@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 6) do
   end
 
   create_table "user_games", force: :cascade do |t|
-    t.integer "money"
+    t.integer "money", default: 2
     t.string "cards", default: [], array: true
     t.integer "user_id"
     t.integer "game_id"
