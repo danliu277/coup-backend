@@ -27,6 +27,7 @@ class Game < ApplicationRecord
     end
 
     def remaining_cards
-        remaining_cards = self.game_cards.filter{|card| card.deck}
+        # Use find to get updated data
+        remaining_cards = Game.find(self.id).game_cards.filter{|card| card.deck}
     end
 end
