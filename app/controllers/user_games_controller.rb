@@ -5,7 +5,7 @@ class UserGamesController < ApplicationController
     end
 
     def get_user_game
-        user_game = UserGame.find(params[:id])
+        user_game = UserGame.find_by(user_id: params[:id])
         render json: user_game
     end
 end
