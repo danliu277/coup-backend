@@ -15,5 +15,7 @@ Rails.application.routes.draw do
   get 'games/:id', to: 'games#get_game'
   patch 'games/:id', to: 'games#start_game'
 
+  post 'game_moves/:id', to: 'game_moves#execute_move'
+
   mount ActionCable.server => '/cable'
 end

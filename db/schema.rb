@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(version: 8) do
   create_table "game_moves", force: :cascade do |t|
     t.string "action"
     t.integer "target_id"
+    t.integer "game_move"
+    t.integer "user_game"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -38,6 +40,7 @@ ActiveRecord::Schema.define(version: 8) do
   create_table "games", force: :cascade do |t|
     t.integer "room_id"
     t.boolean "started", default: false
+    t.integer "user_game_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
