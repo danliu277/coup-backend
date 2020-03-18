@@ -11,7 +11,8 @@ class GamesController < ApplicationController
         serialized_data = ActiveModelSerializers::Adapter::Json.new(
             GameSerializer.new(game)
         ).serializable_hash
-        GamesChannel.broadcast_to game, serialized_data
+        room = game.room
+        RoomsChannel.broadcast_to room, serialized_data
         render json: game
     end
 end

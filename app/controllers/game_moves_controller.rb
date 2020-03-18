@@ -16,11 +16,15 @@ class GameMovesController < ApplicationController
     def swap_cards
         game = Game.find(params[:id])
         user_game = UserGame.find(params[:user_game_id])
+        # Remove relation between user and card and create relation between card and deck
+        # Put cards back in deck
         params[:selected_hand].each do |card_id|
             user_card = user_game.user_cards.find_by(card_id: card_id)
             user_card.destroy
             GameCard.create(deck: true, card_id: card_id, game: game)
         end
+        # Remove relation between card and deck and create relation between user and card
+        # Add cards to user
         params[:selected_draw].each do |card_id|
             game_card = game.game_cards.find_by(card_id: card_id)
             game_card.destroy
