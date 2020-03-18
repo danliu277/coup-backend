@@ -7,6 +7,12 @@ class GameMovesController < ApplicationController
         render json: user_game
     end 
 
+    def draw_two
+        game = Game.find(params[:id])
+        drawn_cards = game.remaining_cards.sample(2).map{|game_card| game_card.card}
+        render json: drawn_cards
+    end
+
     private def handle_move(action, game, user_game, target_game)
         case action
         # Income gain 1 coin
