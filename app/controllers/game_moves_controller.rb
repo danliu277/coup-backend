@@ -46,26 +46,35 @@ class GameMovesController < ApplicationController
             user_game.save
         # Coup lose 7 coins, target loses a card
         when 2
-            user_game.money -= 7
-            target_card = target_game.user_cards.sample
-            GameCard.create(deck: false, card: target_card.card, game: game)
-            target_card.destroy
-            user_game.save
+            if user_game.money >= 7
+                user_game.money -= 7
+                target_card = target_game.user_cards.sample
+                GameCard.create(deck: false, card: target_card.card, game: game)
+                target_card.destroy
+                user_game.save
+            end
         # Duke gain 3 coins
         when 3
             user_game.money += 3
             user_game.save
         # Assassin lose 3 coins, target lose card
         when 4
-            user_game.money -=3
-            target_card = target_game.user_cards.sample
-            GameCard.create(deck: false, card: target_card.card, game: game)
-            target_card.destroy
-            user_game.save
+            if user_game.money >= 3
+                user_game.money -=3
+                target_card = target_game.user_cards.sample
+                GameCard.create(deck: false, card: target_card.card, game: game)
+                target_card.destroy
+                user_game.save
+            end
         # Captain steal 3 coins from target
         when 5
-            user_game.money += 2
-            target_game.money -= 2
+            if target_game.money >= 2
+                user_game.money += 2
+                target_game.money -= 2
+            else
+                user_game.money += target_game.money
+                target_game.money = 0
+            end
             user_game.save
             target_game.save
         # Ambassador can change 2 cards
