@@ -4,6 +4,7 @@ class GameMovesController < ApplicationController
         user_game = UserGame.find(params[:user_game_id])
         target_game = params[:target_id] ? UserGame.find(params[:target_id]) : nil
         handle_move(params[:game_move][:action], game, user_game, target_game)
+        GamesChannel.broadcast_to game, message: true
         render json: user_game
     end 
 
