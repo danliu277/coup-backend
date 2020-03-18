@@ -20,7 +20,9 @@ class GameMovesController < ApplicationController
         # Coup lose 7 coins, target loses a card
         when 2
             user_game.money -= 7
-            target_game.user_cards.sample.destroy
+            target_card = target_game.user_cards.sample
+            GameCard.create(deck: false, card: target_card.card, game: game)
+            target_card.destroy
             user_game.save
         # Duke gain 3 coins
         when 3
@@ -29,7 +31,9 @@ class GameMovesController < ApplicationController
         # Assassin lose 3 coins, target lose card
         when 4
             user_game.money -=3
-            target_game.user_cards.sample.destroy
+            target_card = target_game.user_cards.sample
+            GameCard.create(deck: false, card: target_card.card, game: game)
+            target_card.destroy
             user_game.save
         # Captain steal 3 coins from target
         when 5

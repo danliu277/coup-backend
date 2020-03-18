@@ -27,10 +27,6 @@ class RoomsController < ApplicationController
         room = Room.find(params[:id])
         if room && room.authenticate(params[:password])
             user_game = UserGame.create(user_id: params[:user_id], game: room.game)
-            # serialized_data = ActiveModelSerializers::Adapter::Json.new(
-            #     UserGameSerializer.new(user_game)
-            # ).serializable_hash
-            # RoomsChannel.broadcast_to room, serialized_data
             RoomsChannel.broadcast_to room, message: true
             render json: room
         else
