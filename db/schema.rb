@@ -29,10 +29,11 @@ ActiveRecord::Schema.define(version: 8) do
   end
 
   create_table "game_moves", force: :cascade do |t|
-    t.string "action"
+    t.integer "action"
     t.integer "target_id"
-    t.integer "game_move"
-    t.integer "user_game"
+    t.integer "game_id"
+    t.integer "user_game_id"
+    t.integer "reactions", default: [], array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
