@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 8) do
     t.integer "room_id"
     t.boolean "started", default: false
     t.integer "user_game_id"
+    t.integer "winner_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

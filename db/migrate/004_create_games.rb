@@ -4,6 +4,7 @@ class CreateGames < ActiveRecord::Migration[6.0]
       t.integer :room_id
       t.boolean :started, default: false
       t.integer :user_game_id
+      t.integer :winner_id
 
       t.timestamps
     end

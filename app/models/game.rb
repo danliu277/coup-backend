@@ -33,12 +33,17 @@ class Game < ApplicationRecord
     end
 
     def next_turn
-        user_games = self.user_games.sort_by{|user_game| user_game.id}
-        index = user_games.index{|user_game| user_game.id === self.user_game_id}
-        if index == user_games.length - 1
-            self.user_game_id = user_games[0].id
+        user_games = self.user_games.filter{|user_game| user_game.user_cards.length != 0}
+        if(user_games.length > 1)
+            user_games = user_games.sort_by{|user_game| user_game.id}
+            index = user_games.index{|user_game| user_game.id === self.user_game_id}
+            if index == user_games.length - 1
+                self.user_game_id = user_games[0].id
+            else
+                self.user_game_id = user_games[index + 1].id
+            end
         else
-            self.user_game_id = user_games[index + 1].id
+            self.winner_id = user_games[0].id
         end
     end
 end
