@@ -4,6 +4,8 @@ class GameMovesController < ApplicationController
         user_game = UserGame.find(params[:user_game_id])
         target_game = params[:target_id] ? UserGame.find(params[:target_id]) : nil
         handle_move(params[:game_move][:action], game, user_game, target_game)
+        game.next_turn
+        game.save
         GamesChannel.broadcast_to game, message: true
         render json: user_game
     end 
@@ -31,6 +33,9 @@ class GameMovesController < ApplicationController
             game_card.destroy
             UserCard.create(user_game: user_game, card_id: card_id)
         end
+        game.next_turn
+        game.save
+        GamesChannel.broadcast_to game, message: true
         render json: UserGame.find(params[:user_game_id])
     end
 

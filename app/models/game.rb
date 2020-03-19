@@ -31,4 +31,14 @@ class Game < ApplicationRecord
         # Use find to get updated data
         remaining_cards = Game.find(self.id).game_cards.filter{|card| card.deck}
     end
+
+    def next_turn
+        user_games = self.user_games.sort_by{|user_game| user_game.id}
+        index = user_games.index{|user_game| user_game.id === self.user_game_id}
+        if index == user_games.length - 1
+            self.user_game_id = user_games[0].id
+        else
+            self.user_game_id = user_games[index + 1].id
+        end
+    end
 end
