@@ -12,6 +12,7 @@ class RoomsChannel < ApplicationCable::Channel
     user_game = room.user_games.find_by(user_id: params[:room][:user])
     user_game.destroy
     if room.user_games.length === 0
+      room.game.destroy
       room.destroy
     end
     RoomsChannel.broadcast_to room, message: true

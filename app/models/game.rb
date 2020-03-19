@@ -15,6 +15,7 @@ class Game < ApplicationRecord
                 game_card.destroy
             }
         end
+        self.user_game_id = self.user_games.first.id
         return nil
     end
 

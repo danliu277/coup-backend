@@ -7,6 +7,7 @@ class GamesController < ApplicationController
     def start_game
         game = Game.find_by(room_id: params[:id])
         game.start_game
+        game.save
         game = Game.find_by(room_id: params[:id])
         serialized_data = ActiveModelSerializers::Adapter::Json.new(
             GameSerializer.new(game)
