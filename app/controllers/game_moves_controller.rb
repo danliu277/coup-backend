@@ -42,10 +42,11 @@ class GameMovesController < ApplicationController
         end
     end
 
-    def draw_two
-        game = Game.find(params[:id])
+    def draw_two(game, user_game_id)
+        # game = Game.find(params[:id])
         drawn_cards = game.remaining_cards.sample(2).map{|game_card| game_card.card}
-        render json: drawn_cards
+        # render json: drawn_cards
+        GamesChannel.broadcast_to game, message: {user_game_id: user_game_id, drawn_cards: drawn_cards}
     end
 
     def swap_cards
@@ -117,6 +118,7 @@ class GameMovesController < ApplicationController
             target_game.save
         # Ambassador can change 2 cards
         when 6
+            draw_two(game, user_game.id)
         end
     end
 end
