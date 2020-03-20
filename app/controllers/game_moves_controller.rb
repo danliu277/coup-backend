@@ -184,7 +184,7 @@ class GameMovesController < ApplicationController
     end
 
     private def check_card(game_move)
-        user_game = UserGame.find(game_move.target_id)
+        user_game = UserGame.find(game_move.user_game_id)
         case game_move.action
         # Duke
         when 3
