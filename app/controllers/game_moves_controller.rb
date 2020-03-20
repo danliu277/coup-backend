@@ -8,11 +8,12 @@ class GameMovesController < ApplicationController
         game = game_move.game
         target = game_move.target_id ? UserGame.find(game_move.target_id) : nil
         handle_move(game_move.action, game, game_move.user_game, target)
-        if(game_move.action < 6)
+        if(game_move.action < 6 || game_move.action > 6)
             game.next_turn
             game.save
         end
-        game_move.destroy
+        # game_move.destroy
+        game.game_moves.each(&:destroy)
         GamesChannel.broadcast_to game, message: true
         # render json: user_game
     end 
@@ -20,6 +21,10 @@ class GameMovesController < ApplicationController
     def broadcast_move
         game = Game.find(params[:id])
         game_move = GameMove.create(action: params[:game_move][:action], target_id: params[:target_id], game: game, user_game_id: params[:user_game_id])
+        if game_move.action === 4
+            game_move.user_game.money -= 3
+            game_move.save
+        end
         serialized_data = ActiveModelSerializers::Adapter::Json.new(
             GameMoveSerializer.new(game_move)
         ).serializable_hash
@@ -28,7 +33,7 @@ class GameMovesController < ApplicationController
 
     def reaction
         game = Game.find(params[:id])
-        game_move = game.game_move
+        game_move = game.game_moves[0]
         case params[:reaction]
         # Pass
         when 0
@@ -81,6 +86,7 @@ class GameMovesController < ApplicationController
             UserCard.create(user_game: user_game, card_id: card_id)
         end
         game = Game.find(params[:id])
+        game.game_moves.each(&:destroy)
         game.next_turn
         game.save
         GamesChannel.broadcast_to game, message: true
@@ -89,14 +95,14 @@ class GameMovesController < ApplicationController
 
     def call_bluff
         game = Game.find(params[:id])
-        game_move = game.game_move
+        game_move = game.game_moves[game.game_moves.length - 1]
         if(check_card(game_move))
-            target_game = UserGame.find(params[:user_game_id])
+            target_game = UserGame.find(game_move.target_id)
             target_card = target_game.user_cards.sample
             target_card.destroy
             execute_move(game_move)
         else
-            user_game = UserGame.find(params[:user_game_id])
+            user_game = UserGame.find(game_move.target_id)
             target_card = user_game.user_cards.sample
             target_card.destroy
             game.next_turn
@@ -108,7 +114,7 @@ class GameMovesController < ApplicationController
 
     def block
         game = Game.find(params[:id])
-        game_move = game.game_move
+        game_move = game.game_moves[0]
         # game_move.destroy
         # game.next_turn
         # game.save
@@ -117,16 +123,13 @@ class GameMovesController < ApplicationController
         case game_move.action
         # block foreign aid
         when 1
-            block_move = GameMove.create(action: 7, game: game, user_game_id: params[:user_game_id], target_id: game.game_move.user_game_id)
+            block_move = GameMove.create(action: 7, game: game, user_game_id: params[:user_game_id], target_id: game.game_moves[0].user_game_id)
         # block assassin
         when 4
-            block_move = GameMove.create(action: 8, game: game, user_game_id: params[:user_game_id], target_id: game.game_move.user_game_id)
+            block_move = GameMove.create(action: 8, game: game, user_game_id: params[:user_game_id], target_id: game.game_moves[0].user_game_id)
         # block steal
         when 5
-            block_move = GameMove.create(action: 9, game: game, user_game_id: params[:user_game_id], target_id: game.game_move.user_game_id)
-        # block ambassador
-        when 5
-            block_move = GameMove.create(action: 10, game: game, user_game_id: params[:user_game_id], target_id: game.game_move.user_game_id)
+            block_move = GameMove.create(action: 9, game: game, user_game_id: params[:user_game_id], target_id: game.game_moves[0].user_game_id)
         end
         serialized_data = ActiveModelSerializers::Adapter::Json.new(
             GameMoveSerializer.new(block_move)
@@ -159,13 +162,9 @@ class GameMovesController < ApplicationController
             user_game.save
         # Assassin lose 3 coins, target lose card
         when 4
-            if user_game.money >= 3
-                user_game.money -=3
-                target_card = target_game.user_cards.sample
-                GameCard.create(deck: false, card: target_card.card, game: game)
-                target_card.destroy
-                user_game.save
-            end
+            target_card = target_game.user_cards.sample
+            GameCard.create(deck: false, card: target_card.card, game: game)
+            target_card.destroy
         # Captain steal 3 coins from target
         when 5
             if target_game.money >= 2
@@ -180,6 +179,8 @@ class GameMovesController < ApplicationController
         # Ambassador can change 2 cards
         when 6
             draw_two(game, user_game.id)
+        when 7..9
+            
         end
     end
 
@@ -187,17 +188,20 @@ class GameMovesController < ApplicationController
         user_game = UserGame.find(game_move.user_game_id)
         case game_move.action
         # Duke
-        when 3
+        when 3, 7
             return user_game.cards.any?{|card| card.value == 4}
         # Assasissin
         when 4
             return user_game.cards.any?{|card| card.value == 3}
         # Captain
-        when 5
+        when 5, 9
             return user_game.cards.any?{|card| card.value == 5}
         # Ambassador
-        when 6
+        when 6, 9
             return user_game.cards.any?{|card| card.value == 1}
+        # Contessa
+        when 8
+            return user_game.cards.any?{|card| card.value == 2}
         end
     end
 end

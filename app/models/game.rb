@@ -3,7 +3,7 @@ class Game < ApplicationRecord
     has_many :user_games
     has_many :game_cards
     has_many :cards, through: :game_cards
-    has_one :game_move
+    has_many :game_moves
 
     def start_game
         self.started = true
