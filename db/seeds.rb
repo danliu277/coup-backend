@@ -17,11 +17,11 @@ Room.destroy_all
 User.destroy_all
 
 3.times {
-    Card.create(name: 'Ambassador', image: 'Ambassador.png')
-    Card.create(name: 'Contessa', image: 'Contessa.png')
-    Card.create(name: 'Assassin', image: 'Assassin.png')
-    Card.create(name: 'Duke', image: 'Duke.png')
-    Card.create(name: 'Captain', image: 'Captain.png')
+    Card.create(name: 'Ambassador', image: 'Ambassador.png', value: 1)
+    Card.create(name: 'Contessa', image: 'Contessa.png', value: 2)
+    Card.create(name: 'Assassin', image: 'Assassin.png', value: 3)
+    Card.create(name: 'Duke', image: 'Duke.png', value: 4)
+    Card.create(name: 'Captain', image: 'Captain.png', value: 5)
 }
 
 # user1 = User.create(nickname: 'user1')

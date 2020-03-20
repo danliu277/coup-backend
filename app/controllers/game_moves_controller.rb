@@ -8,8 +8,10 @@ class GameMovesController < ApplicationController
         game = game_move.game
         target = game_move.target_id ? UserGame.find(game_move.target_id) : nil
         handle_move(game_move.action, game, game_move.user_game, target)
-        game.next_turn
-        game.save
+        if(game_move.action < 6)
+            game.next_turn
+            game.save
+        end
         GamesChannel.broadcast_to game, message: true
         # render json: user_game
     end 
@@ -27,9 +29,10 @@ class GameMovesController < ApplicationController
         game = Game.find(params[:id])
         game_move = game.game_move
         case params[:reaction]
+        # Pass
         when 0
             if !game_move.reactions.include?(params[:user_game_id])
-                if game.user_games.length - 1 == game_move.reactions.length
+                if game.user_games.length - 2 == game_move.reactions.length
                     execute_move(game_move)
                     game_move.destroy
                 else
@@ -37,8 +40,18 @@ class GameMovesController < ApplicationController
                     game_move.save
                 end
             end
+        # Block
         when 1
+
+            game_move.destroy
+        # Call bluff
         when 2
+            game_move.target_id = 
+            serialized_data = ActiveModelSerializers::Adapter::Json.new(
+                GameMoveSerializer.new(game_move)
+            ).serializable_hash
+            GamesChannel.broadcast_to game, game_move
+            game_move.destroy
         end
     end
 
@@ -71,6 +84,23 @@ class GameMovesController < ApplicationController
         game.save
         GamesChannel.broadcast_to game, message: true
         render json: UserGame.find(params[:user_game_id])
+    end
+
+    def call_bluff
+        game = Game.find(params[:id])
+        game_move = game.game_move
+        if(check_card(game_move))
+            target_game = UserGame.find(params[:user_game_id])
+            target_card = target_game.user_cards.sample
+            target_card.destroy
+            execute_move(game_move)
+        else
+            user_game = UserGame.find(params[:user_game_id])
+            target_card = user_game.user_cards.sample
+            target_card.destroy
+        end
+        game_move.destroy
+        GamesChannel.broadcast_to game, message: true
     end
 
     private def handle_move(action, game, user_game, target_game)
@@ -119,6 +149,28 @@ class GameMovesController < ApplicationController
         # Ambassador can change 2 cards
         when 6
             draw_two(game, user_game.id)
+        # Block
+        when 7
+        # Call bluff
+        when 8
+        end
+    end
+
+    private def check_card(game_move)
+        user_game = UserGame.find(game_move.target_id)
+        case game_move.action
+        # Duke
+        when 3
+            return user_game.cards.any?{|card| card.value == 4}
+        # Assasissin
+        when 4
+            return user_game.cards.any?{|card| card.value == 3}
+        # Captain
+        when 5
+            return user_game.cards.any?{|card| card.value == 5}
+        # Ambassador
+        when 6
+            return user_game.cards.any?{|card| card.value == 1}
         end
     end
 end
