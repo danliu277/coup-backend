@@ -12,6 +12,7 @@ class GameMovesController < ApplicationController
             game.next_turn
             game.save
         end
+        game_move.destroy
         GamesChannel.broadcast_to game, message: true
         # render json: user_game
     end 
@@ -46,7 +47,7 @@ class GameMovesController < ApplicationController
             game_move.destroy
         # Call bluff
         when 2
-            game_move.target_id = 
+            game_move.target_id = 1
             serialized_data = ActiveModelSerializers::Adapter::Json.new(
                 GameMoveSerializer.new(game_move)
             ).serializable_hash
@@ -98,9 +99,39 @@ class GameMovesController < ApplicationController
             user_game = UserGame.find(params[:user_game_id])
             target_card = user_game.user_cards.sample
             target_card.destroy
+            game.next_turn
+            game.save
         end
         game_move.destroy
         GamesChannel.broadcast_to game, message: true
+    end
+
+    def block
+        game = Game.find(params[:id])
+        game_move = game.game_move
+        # game_move.destroy
+        # game.next_turn
+        # game.save
+        # game_move.destroy
+        block_move = nil
+        case game_move.action
+        # block foreign aid
+        when 1
+            block_move = GameMove.create(action: 7, game: game, user_game_id: params[:user_game_id], target_id: game.game_move.user_game_id)
+        # block assassin
+        when 4
+            block_move = GameMove.create(action: 8, game: game, user_game_id: params[:user_game_id], target_id: game.game_move.user_game_id)
+        # block steal
+        when 5
+            block_move = GameMove.create(action: 9, game: game, user_game_id: params[:user_game_id], target_id: game.game_move.user_game_id)
+        # block ambassador
+        when 5
+            block_move = GameMove.create(action: 10, game: game, user_game_id: params[:user_game_id], target_id: game.game_move.user_game_id)
+        end
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+            GameMoveSerializer.new(block_move)
+        ).serializable_hash
+        GamesChannel.broadcast_to game, serialized_data
     end
 
     private def handle_move(action, game, user_game, target_game)
@@ -149,10 +180,6 @@ class GameMovesController < ApplicationController
         # Ambassador can change 2 cards
         when 6
             draw_two(game, user_game.id)
-        # Block
-        when 7
-        # Call bluff
-        when 8
         end
     end
 

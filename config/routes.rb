@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get 'game_moves/:id/draw_two', to: 'game_moves#draw_two'
   post 'game_moves/:id/reaction', to: 'game_moves#reaction'
   post 'game_moves/:id/call_bluff', to: 'game_moves#call_bluff'
+  post 'game_moves/:id/block', to: 'game_moves#block'
   # post 'game_moves/:id/swap_cards', to: 'game_moves#swap_cards'
   post 'game_moves/:id', to: 'game_moves#broadcast_move'
 
