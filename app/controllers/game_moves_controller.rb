@@ -95,7 +95,7 @@ class GameMovesController < ApplicationController
             target_card.destroy
             execute_move(game_move)
         else
-            user_game = UserGame.find(game_move.target_id)
+            user_game = UserGame.find(game_move.user_game_id)
             target_card = user_game.user_cards.sample
             target_card.destroy
             game.game_moves.each(&:destroy)
