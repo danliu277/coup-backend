@@ -92,11 +92,13 @@ class GameMovesController < ApplicationController
         if(check_card(game_move))
             target_game = UserGame.find(game_move.target_id)
             target_card = target_game.user_cards.sample
+            GameCard.create(deck: false, card: target_card.card, game: game)
             target_card.destroy
             execute_move(game_move)
         else
             user_game = UserGame.find(game_move.user_game_id)
             target_card = user_game.user_cards.sample
+            GameCard.create(deck: false, card: target_card.card, game: game)
             target_card.destroy
             game.game_moves.each(&:destroy)
             game.next_turn
