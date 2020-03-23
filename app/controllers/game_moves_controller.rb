@@ -105,6 +105,7 @@ class GameMovesController < ApplicationController
             user_game = UserGame.find(game_move.target_id)
             target_card = user_game.user_cards.sample
             target_card.destroy
+            game.game_moves.each(&:destroy)
             game.next_turn
             game.save
         end
