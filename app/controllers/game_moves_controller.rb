@@ -1,10 +1,5 @@
 class GameMovesController < ApplicationController
     def execute_move(game_move)
-        # game = Game.find(params[:id])
-        # user_game = UserGame.find(params[:user_game_id])
-        # target_game = params[:target_id] ? UserGame.find(params[:target_id]) : nil
-        # handle_move(params[:game_move][:action], game, user_game, target_game)
-        # game = Game.find(params[:id])
         game = game_move.game
         target = game_move.target_id ? UserGame.find(game_move.target_id) : nil
         handle_move(game_move.action, game, game_move.user_game, target)
@@ -12,10 +7,8 @@ class GameMovesController < ApplicationController
             game.next_turn
             game.save
         end
-        # game_move.destroy
         game.game_moves.each(&:destroy)
         GamesChannel.broadcast_to game, message: true
-        # render json: user_game
     end 
 
     def broadcast_move
@@ -116,10 +109,6 @@ class GameMovesController < ApplicationController
     def block
         game = Game.find(params[:id])
         game_move = game.game_moves[0]
-        # game_move.destroy
-        # game.next_turn
-        # game.save
-        # game_move.destroy
         block_move = nil
         case game_move.action
         # block foreign aid
