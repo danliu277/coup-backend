@@ -1,6 +1,6 @@
 class RoomsController < ApplicationController
     def index
-        rooms = Room.all
+        rooms = Room.all.filter{|room| !room.game.started }
         render json: rooms
     end
 
