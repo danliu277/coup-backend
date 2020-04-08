@@ -51,7 +51,7 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # Match ngrok route
-  config.hosts << "2792f0b8.ngrok.io"
-  config.action_cable.url = "wss://2792f0b8.ngrok.io/cable"
+  config.hosts << "5a7d8fb4.ngrok.io"
+  config.action_cable.url = "wss://5a7d8fb4.ngrok.io/cable"
   config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
 end
